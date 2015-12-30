@@ -128,33 +128,3 @@ class EEM(object):
         result = np.array([self._pdf(p, l) for l in range(2)]).T
         return result / np.sum(result, axis=1).reshape(-1, 1)
 
-if __name__ == '__main__':
-    from time import time
-    
-    data = []
-    T = 100000
-    for e in range(1, 9):
-        N = int(10 ** (e/2.))
-
-        X = np.random.randn(10 * N).reshape(N, -1) / 3
-        Xt = np.random.randn(10 * T).reshape(T, -1) / 3 
-
-        noise = (np.random.rand(10 * N) * 2 - 1).reshape(N, -1)
-        noiset = (np.random.rand(10 * T) * 2 - 1).reshape(T, -1)
-
-        print N
-        for clf in [EEM(f=relu, h='sqrt', random_state=0)]: 
-            print clf.__class__.__name__
-            s = time()
-            trainX = np.vstack((X, noise))
-            trainy = np.array( [0] * N + [1] * N )
-            clf.fit(trainX, trainy)
-            ttime = time() - s
-            print 'train', ttime
-            s = time()
-            score = 0.5 * np.mean(clf.predict(Xt) == 0) + 0.5 * np.mean(clf.predict(noise) != 0)
-            print 'BAC', score 
-            tetime = time() - s
-            print 'test', tetime
-            print
-            #print clf.predict_proba(Xt)

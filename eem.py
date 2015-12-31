@@ -75,7 +75,7 @@ class EEM(object):
 
     def _pdf(self, x, l):
         """ Returns pdf og l'th class """
-        return 1. / np.sqrt(2 * np.pi * self.sigma[l]) * np.exp( -(x - self.m[l]) ** 2 / (2 * self.sigma[l]))
+        return 1. / np.sqrt(2 * np.pi * self.sigma[l]) * np.exp( - np.power(x - self.m[l], 2) / (2 * self.sigma[l]))
 
     def _hidden_init(self, X, y):
         """ Initializes hidden layer """
@@ -109,10 +109,10 @@ class EEM(object):
             if self.C is not None:
                 self.sigma[l] += np.eye(self.current_h) / (2.0*self.C)
 
-        self.beta = la.pinv(self.sigma[0] + self.sigma[1]).dot(self.m[1] - self.m[0])
+        self.beta = la.pinv(self.sigma[0] + self.sigma[1]).dot((self.m[1] - self.m[0]).T)
         for l in range(2):
-            self.m[l] = self.beta.T.dot(self.m[l])
-            self.sigma[l] = self.beta.T.dot(self.sigma[l]).dot(self.beta)
+            self.m[l] = float(self.beta.T.dot(self.m[l].T))
+            self.sigma[l] = float(self.beta.T.dot(self.sigma[l]).dot(self.beta))
 
     def predict(self, X):
         """ Labels given set of samples """

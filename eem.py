@@ -83,8 +83,10 @@ class EEM(object):
         if self.fd:
             if isinstance(self.h, float):
                 self.current_h = self.h * X.shape[0]
-            if isinstance(self.h, str):
+            elif isinstance(self.h, str):
                 self.current_h = self._maps[self.h](X.shape[0])
+            else:
+                self.current_h = self.h
             self.current_h = max(1, min(self.current_h, X.shape[0]))
             W = X[np.random.choice(range(X.shape[0]), size=self.current_h, replace=False)]
         else:      
